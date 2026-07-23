@@ -1,0 +1,19 @@
+{
+  "name": "@madagasik-hanina/database",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "echo \"No build needed for Prisma schema\"",
+    "lint": "echo \"No lint needed\"",
+    "generate": "prisma generate",
+    "migrate": "prisma migrate dev",
+    "studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0",
+    "typescript": "^5.7.0"
+  }
+}
