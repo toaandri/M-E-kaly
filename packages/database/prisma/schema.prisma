@@ -15,6 +15,96 @@ model User {
   role      UserRole @default(CUSTOMER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  vendor   Vendor?
+  driver   Driver?
+  orders   Order[]
+}
+
+model Vendor {
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  tier        VendorTier @default(BASIC)
+  address     String?
+  latitude    Float?
+  longitude   Float?
+  isOpen      Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  userId   String    @unique
+  user     User      @relation(fields: [userId], references: [id])
+  products Product[]
+}
+
+model Driver {
+  id        String  @id @default(uuid())
+  isOnline  Boolean @default(false)
+  latitude  Float?
+  longitude Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  orders Order[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  imageUrl    String?
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  vendorId String  @unique
+  vendor   Vendor  @relation(fields: [vendorId], references: [id])
+  orderItems OrderItem[]
+}
+
+model Order {
+  id            String      @id @default(uuid())
+  status        OrderStatus @default(PENDING)
+  totalAmount   Float
+  deliveryAddress String
+  note          String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  customerId String
+  customer   User   @relation(fields: [customerId], references: [id])
+  driverId   String?
+  driver     Driver? @relation(fields: [driverId], references: [id])
+
+  items      OrderItem[]
+  payment    Payment?
+}
+
+model OrderItem {
+  id       String @id @default(uuid())
+  quantity Int
+  price    Float
+
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  method        PaymentMethod
+  status        PaymentStatus @default(PENDING)
+  amount        Float
+  transactionId String?
+  createdAt     DateTime      @default(now())
+
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id])
 }
 
 enum UserRole {
@@ -22,4 +112,34 @@ enum UserRole {
   VENDOR
   DRIVER
   ADMIN
+}
+
+enum VendorTier {
+  BASIC
+  PREMIUM
+  ENTERPRISE
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  PICKED_UP
+  DELIVERING
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  MOBILE_MONEY
+  CARD
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
 }
