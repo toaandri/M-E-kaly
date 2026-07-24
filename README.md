@@ -44,4 +44,3 @@ npm run test    # Tests
 - **Mobile** : Expo SDK 51, React Native
 - **Backend** : NestJS, Prisma ORM, PostgreSQL
 - **Monorepo** : Turborepo, npm workspaces
-- **CI/CD** : GitHub Actions
